@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { UtensilsCrossed, Sparkles } from 'lucide-react';
+import { UtensilsCrossed, Sparkles, QrCode } from 'lucide-react';
 
 import { CAFE_CONFIG } from './config/cafeConfig';
 import { MENU_ITEMS } from './config/menuData';
@@ -16,9 +16,10 @@ import CartView from './components/CartView';
 import OrderConfirmationModal from './components/OrderConfirmationModal';
 import ContactView from './components/ContactView';
 import BottomNav from './components/BottomNav';
+import TableQRModal from './components/TableQRModal';
 
 export default function App() {
-  // 1. Table Number: Defaults directly to Table 01 (or reads ?table= from URL)
+  // 1. Table Number: Identified from URL ?table=01 or ?table=02, defaults to '01'
   const [currentTable] = useState(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -39,31 +40,62 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 4. Cart State with LocalStorage Persistence
+  // 4. Cart State with Per-Table Isolation & Fresh Scan Detection
   const [cartItems, setCartItems] = useState(() => {
     try {
-      const savedCart = localStorage.getItem('brew_cart');
+      const urlParams = new URLSearchParams(window.location.search);
+      const isFreshScan = urlParams.get('fresh') === '1' || urlParams.get('fresh') === 'true';
+      const tableParam = urlParams.get('table') 
+        ? urlParams.get('table').trim().padStart(2, '0') 
+        : (CAFE_CONFIG.defaultTable || '01');
+
+      const storageKey = `brew_cart_table_${tableParam}`;
+
+      // When scanned as a fresh customer, initialize completely empty
+      if (isFreshScan) {
+        localStorage.removeItem(storageKey);
+        return [];
+      }
+
+      const savedCart = localStorage.getItem(storageKey);
       return savedCart ? JSON.parse(savedCart) : [];
     } catch {
       return [];
     }
   });
 
-  // 5. Modals & Notifications
+  // 5. Special Notes & Modals
   const [specialNote, setSpecialNote] = useState('');
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const menuScrollRef = useRef(null);
 
-  // Sync cart to LocalStorage
+  // Sync cart strictly to this specific table's storage
   useEffect(() => {
     try {
-      localStorage.setItem('brew_cart', JSON.stringify(cartItems));
+      const storageKey = `brew_cart_table_${currentTable}`;
+      if (cartItems.length > 0) {
+        localStorage.setItem(storageKey, JSON.stringify(cartItems));
+      } else {
+        localStorage.removeItem(storageKey);
+      }
     } catch (e) {
       console.error('Failed to save cart to localStorage', e);
     }
-  }, [cartItems]);
+  }, [cartItems, currentTable]);
+
+  // Clean the ?fresh=1 URL parameter silently so normal refreshes during browsing retain added items
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('fresh')) {
+        url.searchParams.delete('fresh');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+  }, []);
 
   // Toast Notification
   const showToast = (msg) => {
@@ -128,6 +160,7 @@ export default function App() {
   const handleClearCart = () => {
     if (window.confirm('Do you want to clear your cart?')) {
       setCartItems([]);
+      localStorage.removeItem(`brew_cart_table_${currentTable}`);
       showToast('Cart cleared');
     }
   };
@@ -149,12 +182,13 @@ export default function App() {
     setIsOrderModalOpen(true);
   };
 
-  // Confirm and Open WhatsApp
+  // Confirm and Place Order on WhatsApp
+  // Requirement: Cart must be completely cleared when place order is clicked!
   const handleConfirmAndSendWhatsApp = () => {
     try {
       confetti({
-        particleCount: 80,
-        spread: 70,
+        particleCount: 90,
+        spread: 75,
         origin: { y: 0.6 }
       });
     } catch {}
@@ -166,12 +200,19 @@ export default function App() {
       specialNote: specialNote
     });
 
-    setIsOrderModalOpen(false);
+    // 1. Immediately clear the cart and special notes for this table
+    setCartItems([]);
+    setSpecialNote('');
+    localStorage.removeItem(`brew_cart_table_${currentTable}`);
 
-    // Open WhatsApp in new tab
+    // 2. Close modal and return to fresh Home page
+    setIsOrderModalOpen(false);
+    setActiveView('home');
+
+    // 3. Open WhatsApp in new tab
     window.open(link, '_blank');
 
-    showToast('Opening WhatsApp... Please tap Send to place order!');
+    showToast(`Order sent to WhatsApp! Cart for Table ${currentTable} is now cleared.`);
   };
 
   const scrollToMenu = () => {
@@ -191,7 +232,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Header with Table Number on Nav Bar (No dropdown) */}
+      {/* Main Header with Table Number Badge (No dropdown) */}
       {activeView !== 'cart' && (
         <Header
           currentTable={currentTable}
@@ -214,6 +255,24 @@ export default function App() {
                   Ordering from <strong style={{ color: '#2B1810', marginLeft: '2px' }}>Table {currentTable}</strong>
                 </span>
               </div>
+              <button 
+                onClick={() => setIsQRModalOpen(true)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#C78248',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  cursor: 'pointer'
+                }}
+                title="View Table 1 & Table 2 QR Codes"
+              >
+                <QrCode size={13} />
+                <span>Table QRs</span>
+              </button>
             </div>
 
             {/* Hero Banner on Home View */}
@@ -265,7 +324,7 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW: CART (Preserves Table 01 throughout checkout, no dropdown) */}
+        {/* VIEW: CART (Preserves Table number throughout checkout, no dropdown) */}
         {activeView === 'cart' && (
           <CartView
             cartItems={cartItems}
@@ -283,7 +342,7 @@ export default function App() {
 
         {/* VIEW: CONTACT */}
         {activeView === 'contact' && (
-          <ContactView onOpenAdmin={() => {}} />
+          <ContactView onOpenAdmin={() => setIsQRModalOpen(true)} />
         )}
       </main>
 
@@ -313,6 +372,11 @@ export default function App() {
           onClose={() => setIsOrderModalOpen(false)}
           onConfirmWhatsApp={handleConfirmAndSendWhatsApp}
         />
+      )}
+
+      {/* Table 1 & Table 2 QR Stands Modal */}
+      {isQRModalOpen && (
+        <TableQRModal onClose={() => setIsQRModalOpen(false)} />
       )}
     </div>
   );
