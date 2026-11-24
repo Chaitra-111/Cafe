@@ -12,7 +12,7 @@ export default function TableQRModal({ onClose }) {
         return `${window.location.origin}${window.location.pathname}`;
       }
     }
-    return 'https://chaitra-111.github.io/Cafe/';
+    return 'https://brew-bites-cafe-five.vercel.app/';
   });
 
   const localWifiUrl = `http://192.168.0.103:3000/?table=${selectedTable}&fresh=1`;

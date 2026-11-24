@@ -6,14 +6,16 @@ A mobile-first restaurant food ordering web application designed for **Brew & Bi
 
 ## 🪑 Table QR Code Stands (Table 1 & Table 2)
 
-Scan these QR codes with any smartphone camera or tap the links below:
+Scan these QR codes with any smartphone camera, or **click directly on the QR code image / link** to open the fresh ordering menu for that table:
 
-### 🌐 1. Live Website QR Codes (Production / GitHub Pages)
+### 🌐 Live Production Website QR Codes (Vercel)
 
-| Table Stand | Scannable Live Website QR | Direct Website Link |
+| Table Stand | Scannable QR Code (Click to Open) | Scan / Redirect URL |
 | :---: | :---: | :--- |
-| **Table 01** | ![Table 01 Web QR](public/assets/table-01-web-qr.png) | [👉 Open Table 01 (Live Website)](https://chaitra-111.github.io/Cafe/?table=01&fresh=1) |
-| **Table 02** | ![Table 02 Web QR](public/assets/table-02-web-qr.png) | [👉 Open Table 02 (Live Website)](https://chaitra-111.github.io/Cafe/?table=02&fresh=1) |
+| **Table 01** | [![Table 01 Web QR](public/assets/table-01-web-qr.png)](https://brew-bites-cafe-five.vercel.app/?table=01&fresh=1) | [👉 **https://brew-bites-cafe-five.vercel.app/?table=01&fresh=1**](https://brew-bites-cafe-five.vercel.app/?table=01&fresh=1) |
+| **Table 02** | [![Table 02 Web QR](public/assets/table-02-web-qr.png)](https://brew-bites-cafe-five.vercel.app/?table=02&fresh=1) | [👉 **https://brew-bites-cafe-five.vercel.app/?table=02&fresh=1**](https://brew-bites-cafe-five.vercel.app/?table=02&fresh=1) |
+
+> 💡 **Clickable QR Codes:** Clicking either QR code image above will immediately redirect you to the live Vercel app with that table's fresh session.
 
 ---
 
