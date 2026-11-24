@@ -6,22 +6,44 @@ A mobile-first restaurant food ordering web application designed for **Brew & Bi
 
 ## 🪑 Table QR Code Stands (Table 1 & Table 2)
 
-Scan these QR codes with any smartphone camera to test or print them for physical restaurant tables:
+Scan these QR codes with any smartphone camera or tap the links below:
 
-| Table Stand | Scannable QR Image | Scan Target Link |
+### 🌐 1. Live Website QR Codes (Production / GitHub Pages)
+
+| Table Stand | Scannable Live Website QR | Direct Website Link |
 | :---: | :---: | :--- |
-| **Table 01** | ![Table 01 QR](public/assets/table-01-qr.png) | [Open Table 01 (Fresh Home)](http://localhost:3000/?table=01&fresh=1)<br>`http://192.168.0.103:3000/?table=01&fresh=1` |
-| **Table 02** | ![Table 02 QR](public/assets/table-02-qr.png) | [Open Table 02 (Fresh Home)](http://localhost:3000/?table=02&fresh=1)<br>`http://192.168.0.103:3000/?table=02&fresh=1` |
+| **Table 01** | ![Table 01 Web QR](public/assets/table-01-web-qr.png) | [👉 Open Table 01 (Live Website)](https://chaitra-111.github.io/Cafe/?table=01&fresh=1) |
+| **Table 02** | ![Table 02 Web QR](public/assets/table-02-web-qr.png) | [👉 Open Table 02 (Live Website)](https://chaitra-111.github.io/Cafe/?table=02&fresh=1) |
 
-> 📁 **Direct Image Asset Links in Repo:**
-> - [Table 01 QR Image](public/assets/table-01-qr.png)
-> - [Table 02 QR Image](public/assets/table-02-qr.png)
+---
+
+### 📶 2. Local Wi-Fi Network QR Codes (Local Testing on Same Wi-Fi)
+
+| Table Stand | Scannable Wi-Fi QR | Local Wi-Fi Network Link |
+| :---: | :---: | :--- |
+| **Table 01** | ![Table 01 Wi-Fi QR](public/assets/table-01-qr.png) | `http://192.168.0.103:3000/?table=01&fresh=1` |
+| **Table 02** | ![Table 02 Wi-Fi QR](public/assets/table-02-qr.png) | `http://192.168.0.103:3000/?table=02&fresh=1` |
+
+> 📁 **Direct QR Image Asset Files in Repo:**
+> - [Table 01 Website QR Image](public/assets/table-01-web-qr.png)
+> - [Table 02 Website QR Image](public/assets/table-02-web-qr.png)
+> - [Table 01 Local Wi-Fi QR Image](public/assets/table-01-qr.png)
+> - [Table 02 Local Wi-Fi QR Image](public/assets/table-02-qr.png)
+
+---
+
+## 📱 Fully Responsive on All Devices
+
+The application is engineered to automatically scale and adapt to any device without feeling zoomed-in:
+- **Small & Standard Mobiles (320px – 480px):** Fluid edge-to-edge layout, responsive font scaling (`clamp()`), and optimized 2-column food cards.
+- **Tablets & iPads (641px – 1024px):** Comfortable 3-column menu grid, expanded hero card, and centered controls.
+- **Laptops & Desktops (> 1024px):** Premium cafe web application layout with a 4-column menu grid and centered bottom navigation.
 
 ---
 
 ## 🔄 Fresh Ordering & Cart Isolation Flow
 
-1. **Automatic Cart Clearing on Order:**
+1. **Automatic Cart Clearing on Order Placement:**
    - When a customer clicks **"Place Order on WhatsApp"** and confirms in the summary modal:
      - The prefilled order is opened in WhatsApp.
      - The customer's cart is **immediately cleared** (`cartCount = 0`).
@@ -40,30 +62,14 @@ Scan these QR codes with any smartphone camera to test or print them for physica
 
 ---
 
-## 📱 Customer Experience & Design Highlights
+## 🎨 Design Palette
 
-- **Visual Theme:** Warm coffee brown (`#3D2314`), dark espresso (`#2A160C`), golden caramel (`#C78248`), cream (`#FAF4EB`, `#FFF9F3`), and soft white.
-- **Top Navigation Bar:** Displays brand *"Brew & Bites Café"* with fixed table badge (`Table 01` / `Table 02`) with no confusing dropdowns.
-- **Hero Section:** Features headline *"Good Coffee. Great Food. Better Moments."*, an *"Explore Menu →"* action button, and a high-resolution iced coffee mug topped with vanilla ice cream and chocolate drizzle (`public/assets/hero-coffee.jpg`).
-- **Product Cards:** 2-column mobile cards with appetizing photography (Cappuccino, Classic Burger, Chocolate Croissant, Chocolate Brownie) and interactive `[-] 1 [+]` quantity steppers.
-- **Sticky Bottom Cart Bar:** Displays `View Cart · X Items · ₹XYZ` as soon as items are added.
-- **WhatsApp Order Format:**
-  ```text
-  Hello Brew & Bites Café!
-
-  I would like to place an order.
-
-  Table Number: 01
-
-  1 × Cappuccino – ₹120
-  2 × Chocolate Croissant – ₹300
-
-  Total: ₹420
-
-  Payment: Pay at Restaurant.
-
-  Please confirm my order.
-  ```
+- **Dark Espresso**: `#2A160C`
+- **Warm Coffee Brown**: `#3D2314`
+- **Caramel Accents**: `#C78248`
+- **Cream & Beige**: `#FAF4EB`, `#FFF9F3`, `#EADBCB`
+- **Soft White**: `#FFFFFF`
+- **Typography**: *Playfair Display* & *Plus Jakarta Sans*
 
 ---
 
